@@ -2,6 +2,7 @@ import pyautogui
 import pygetwindow as gw
 from PIL import Image, ImageChops
 from globals import g
+from io import BytesIO
 
 app_window = gw.getWindowsWithTitle(g.window_name)
 
@@ -14,18 +15,17 @@ if app_window:
     width = app_window.width
     height = app_window.height
 
-new_width = int(width / 5)
-new_height = int(height / 5)
-
 assert left + top + width + height
 
 def capture_screenshot():
     # Capture current screen
     screenshot = pyautogui.screenshot()
     cropped_screenshot = screenshot.crop((left, top, left + width, top + height))
-    resized_screenshot = cropped_screenshot.resize((new_width, new_height), Image.Resampling.LANCZOS)
-    resized_screenshot.save("latest.png")
-    return resized_screenshot
+    # resized_screenshot = cropped_screenshot.resize((new_width, new_height), Image.Resampling.LANCZOS)
+    cropped_screenshot.save("latest.jpeg")
+    buffered = BytesIO()
+    cropped_screenshot.save(buffered, format="jpeg")
+    return cropped_screenshot
 
 def image_difference(img1, img2):
     """

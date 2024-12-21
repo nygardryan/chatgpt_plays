@@ -2,5 +2,7 @@
 
 projects_secrets.py
 latest.png
-__pycache__
-
+__pycache__/globals.cpython-313.pyc
+__pycache__/reasoning.cpython-313.pyc
+__pycache__/
+latest.jpeg

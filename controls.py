@@ -84,7 +84,7 @@ def move_mouse(x, y, duration=0):
 
 def click_mouse(button='left', clicks=1, interval=0.1):
     """Click the mouse with specified button and number of clicks."""
-    pyautogui.click(button=button, clicks=clicks, interval=interval)
+    pyautogui.click(button=button, clicks=int(clicks), interval=float(interval))
 
 def hold_mouse_button(button='left', duration=1):
     """Hold a mouse button down for a duration."""

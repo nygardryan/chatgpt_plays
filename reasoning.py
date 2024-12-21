@@ -29,7 +29,7 @@ def describe_screenshot(img):
     img_bytes = buffered.getvalue()
     base64_image = base64.b64encode(img_bytes).decode('utf-8')
 
-    prompt = f"From this image from the game {g.window_name}, list out all percentages of stats and attributes displayed and all important information for the player to know."
+    prompt = f"From this image from the game of {g.window_name}, what are your best guess values and/or percentages of all attributes that are in the image and any relevant game state information for the player to know."
 
 
     print("Describing")
@@ -42,8 +42,61 @@ def describe_screenshot(img):
 
     print("Describe Response")
 
+    print(prompt)
+
     description = response.choices[0].message.content.strip()
     return description
+
+def decide_next_action_strategy(img, strategy, description, additional_prompt=""):
+
+    buffered = BytesIO()
+    img.save(buffered, format="jpeg")
+    img_bytes = buffered.getvalue()
+    base64_image = base64.b64encode(img_bytes).decode('utf-8')
+
+    prompt = f"My strategy in the game {g.window_name} is as thus:"
+    
+    prompt += f"""<strategy>
+    {strategy}
+    </strategy>"""
+
+    prompt += f"""From the current screenshot what action would be best to help me achieve my strategy."""
+
+    print("Strategizing")
+    response = openai.chat.completions.create(
+        model=model, 
+        messages=[{"role": "user", "type": "text", "content": prompt},
+                  {"role": "user", "content": [{"type": "image_url", "image_url": {"url":  f"data:image/jpeg;base64,{base64_image}"}}]}], 
+        temperature=1
+    )
+
+    return response.choices[0].message.content.strip()
+
+
+def controls_py_prompt(img, strategy, description, additional_prompt=""):
+    buffered = BytesIO()
+    img.save(buffered, format="jpeg")
+    img_bytes = buffered.getvalue()
+    base64_image = base64.b64encode(img_bytes).decode('utf-8')
+
+    prompt = f"Write a prompt to get chatgpt to pick an action from this python file to progress the game of {g.window_name} from this image, and I want chatgpt to spit out the coordinates it would use and where to click."
+
+    prompt += f"""<controls>
+    {functions_code}
+    </controls>"""
+
+    response = openai.beta.chat.completions.parse(
+        model=model, 
+        messages=[{"role": "user", "type": "text", "content": prompt},
+                  {"role": "user", "content": [{"type": "image_url", "image_url": {"url":  f"data:image/jpeg;base64,{base64_image}"}}]}], 
+        response_format=Action,
+        temperature=1
+    )
+
+    print("Explain controls")
+
+    return response.choices[0].message.content.strip()
+    
 
 
 def decide_next_action(img, strategy, description, additional_prompt=""):
@@ -62,7 +115,7 @@ def decide_next_action(img, strategy, description, additional_prompt=""):
     if additional_prompt:
         prompt += additional_prompt
 
-    prompt += f"You are playing {g.window_name} and you must choose an action to interact with the game. You should attempt to follow your strategy and react to the current game state"
+    prompt += f"""You are playing {g.window_name} and you must choose an action to interact with the game. You should attempt to follow your strategy and react to the current game state"""
 
     prompt += f"""
     <strategy>

@@ -2,7 +2,7 @@
 import pygetwindow as gw
 
 class Globals:
-    window_name: str = "Tic Tac Toe"
+    window_name: str
     _controls: str = None
     
 

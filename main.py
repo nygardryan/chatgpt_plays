@@ -2,7 +2,7 @@ import os
 import time
 import pygetwindow as gw
 import openai
-from reasoning import describe_screenshot, decide_next_action, decide_strategy
+from reasoning import describe_screenshot, decide_next_action, controls_py_prompt, decide_strategy, decide_next_action_strategy
 from image.image import capture_screenshot, image_difference
 from globals import g
 import controls
@@ -60,7 +60,11 @@ def main():
             description = describe_screenshot(current_screenshot)
             if diff >= difference_threshold:
 
-                next_action = decide_next_action(current_screenshot, strategy, description)
+                action_strategy = decide_next_action_strategy(current_screenshot, strategy, description)
+                # controls_prompt = controls_py_prompt(current_screenshot, strategy, description)
+                print(description)
+                print("-----")
+                next_action = decide_next_action(current_screenshot, strategy, description, action_strategy)
                 prev_action = []
                 prev_arguments = []
                 previous_action, previous_arguments = attempt_action(next_action)
@@ -70,6 +74,9 @@ def main():
                 if prev_action:
                     prompt = f"""Your previous actions of {prev_action}  failed to change the state of the game, use a different function.\n"""
                     print(prev_action)
+                
+                # prompt += controls_py_prompt(current_screenshot, strategy, description)
+
                 next_action = decide_next_action(current_screenshot, strategy, description, prompt)
                 previous_action, previous_arguments = attempt_action(next_action)
                 prev_action.append(previous_action)
@@ -85,3 +92,4 @@ def main():
 
 if __name__ == "__main__": 
     main()
+
