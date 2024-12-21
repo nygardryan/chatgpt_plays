@@ -24,7 +24,7 @@ def capture_screenshot():
     screenshot = pyautogui.screenshot()
     cropped_screenshot = screenshot.crop((left, top, left + width, top + height))
     resized_screenshot = cropped_screenshot.resize((new_width, new_height), Image.Resampling.LANCZOS)
-    resized_screenshot.save("tomato.png")
+    resized_screenshot.save("latest.png")
     return resized_screenshot
 
 def image_difference(img1, img2):
