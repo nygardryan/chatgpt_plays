@@ -4,6 +4,7 @@ import win32gui
 import win32con
 from globals import g
 
+
 # Ensure failsafe mode (move mouse to top-left corner to stop)
 pyautogui.FAILSAFE = True
 
@@ -14,6 +15,28 @@ GAME_WINDOW = {
     'bottom_x': 0,  # Bottom-right x-coordinate of the game window
     'bottom_y': 0   # Bottom-right y-coordinate of the game window
 }
+
+
+def get_cell_center(row, col):
+    """Calculate the center of a Tic Tac Toe cell."""
+    cell_width = (GAME_WINDOW['bottom_x'] - GAME_WINDOW['x']) // 3
+    cell_height = (GAME_WINDOW['bottom_y'] - GAME_WINDOW['y']) // 3
+    
+    center_x = GAME_WINDOW['x'] + int(col) * cell_width + cell_width // 2
+    center_y = GAME_WINDOW['y'] + int(row) * cell_height + cell_height // 2
+    return center_x, center_y
+
+def move_to_cell(row, col):
+    """Move the cursor to the center of a specific Tic Tac Toe cell."""
+    x, y = get_cell_center(row, col)
+    move_mouse(x, y, duration=0.5)  # Move with a 0.5-second delay
+  # Example: Move to the center of the bottom-right cell (row=2, col=2)
+
+
+
+
+
+
 
 def update_window_coordinates():
 
